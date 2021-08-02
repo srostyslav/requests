@@ -55,6 +55,42 @@ func (r *Request) send() (err error) {
 	}
 }
 
+func (r *Request) Put() (err error) {
+	r.init()
+
+	if r.Body != nil {
+		if output, err := json.Marshal(&r.Body); err != nil {
+			return err
+		} else if r.req, err = http.NewRequest(http.MethodPut, r.Url, bytes.NewReader(output)); err != nil {
+			return err
+		}
+	} else if r.req, err = http.NewRequest(http.MethodPut, r.Url, nil); err != nil {
+		return err
+	}
+
+	r.setQueryParams()
+
+	return r.send()
+}
+
+func (r *Request) Patch() (err error) {
+	r.init()
+
+	if r.Body != nil {
+		if output, err := json.Marshal(&r.Body); err != nil {
+			return err
+		} else if r.req, err = http.NewRequest(http.MethodPatch, r.Url, bytes.NewReader(output)); err != nil {
+			return err
+		}
+	} else if r.req, err = http.NewRequest(http.MethodPatch, r.Url, nil); err != nil {
+		return err
+	}
+
+	r.setQueryParams()
+
+	return r.send()
+}
+
 func (r *Request) Post() (err error) {
 	r.init()
 
@@ -87,6 +123,10 @@ func (r *Request) Try(cnt int, method string) (err error) {
 		f = r.Get
 	case http.MethodDelete:
 		f = r.Delete
+	case http.MethodPatch:
+		f = r.Patch
+	case http.MethodPut:
+		f = r.Put
 	default:
 		return fmt.Errorf("method %s is not found", method)
 	}
