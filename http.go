@@ -18,19 +18,19 @@ type Request struct {
 	ResponseBody []byte
 	ResponseCode int
 
-	resp   *http.Response
+	Resp   *http.Response
 	req    *http.Request
-	client *http.Client
+	Client *http.Client
 }
 
 func (r *Request) init() {
-	if r.client == nil {
-		r.client = &http.Client{}
+	if r.Client == nil {
+		r.Client = &http.Client{}
 	}
 }
 
 func (r *Request) SetClient(c *http.Client) {
-	r.client = c
+	r.Client = c
 }
 
 func (r *Request) send() (err error) {
@@ -42,15 +42,15 @@ func (r *Request) send() (err error) {
 		r.req.Header.Add(k, v)
 	}
 
-	if r.resp, err = r.client.Do(r.req); err != nil {
+	if r.Resp, err = r.Client.Do(r.req); err != nil {
 		return err
 	}
 
-	if r.ResponseBody, err = ioutil.ReadAll(r.resp.Body); err != nil {
+	if r.ResponseBody, err = ioutil.ReadAll(r.Resp.Body); err != nil {
 		return err
 	} else {
-		r.resp.Body.Close()
-		r.ResponseCode = r.resp.StatusCode
+		r.Resp.Body.Close()
+		r.ResponseCode = r.Resp.StatusCode
 		return nil
 	}
 }
